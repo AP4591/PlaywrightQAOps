@@ -1,0 +1,109 @@
+const {test, expect} = require('@playwright/test')
+
+test("Client Page Login", async ({page}) => {
+
+    await page.goto("https://rahulshettyacademy.com/client/#/auth/login")
+    console.log(await page.title())
+    console.log(await page.locator("h3").textContent())
+    await expect(page.locator("h3")).toContainText("We Make Your Shopping Simple")
+    await page.locator("input[type='email']").fill("aniket.pathak4@gmail.com")
+    await page.locator("#userPassword").fill("Learning@123")
+    await page.locator("#login").click()
+    console.log(await page.locator(".card-body b").first().textContent())
+    await expect(page.locator(".card-body b").first()).toContainText("ADIDAS ORIGINAL")
+    await page.locator(".fa-sign-out").click()
+    await page.locator(".text-reset").click()
+    await page.locator("#firstName").fill("aniket")
+    await page.locator("#lastName").fill("pathak4")
+    await page.locator("#userEmail").fill("aniket.pathak4@gmail.com")
+    await page.locator("#userMobile").fill("9876543210")
+    await page.locator("#userPassword").fill("Learning@123")
+    await page.locator("#confirmPassword").fill("Learning@123")
+    await page.locator("input[type='checkbox']").check()
+    await page.locator("#login").click()
+    console.log(await page.locator("div[aria-label*='User already exisits']").textContent())
+    await expect(page.locator("div[aria-label*='User already exisits']")).toContainText("User already exisits with this Email Id!")
+    
+})
+
+test("Client Page product filter and selection", async ({page}) => {
+
+    const email = "aniket.pathak4@gmail.com"
+    const productName = "ZARA COAT 3"
+    const products = page.locator(".card-body")
+    await page.goto("https://rahulshettyacademy.com/client/#/auth/login")
+    console.log(await page.title())
+    console.log(await page.locator("h3").textContent())
+    await expect(page.locator("h3")).toContainText("We Make Your Shopping Simple")
+    await page.locator("input[type='email']").fill(email)
+    await page.locator("#userPassword").fill("Learning@123")
+    await page.locator("#login").click()
+    //Checking and selecting the exact product from list of products on page
+    //await page.waitForLoadState('networkidle')
+    await page.locator(".card-body b").last().waitFor()
+    const titles = await page.locator(".card-body b").allTextContents() 
+    console.log(titles)
+    const count = await products.count()
+    console.log(count)
+    for(let i=0; i < count; ++i)
+    {
+        if(await products.nth(i).locator("b").textContent() === productName)
+        {
+            await products.nth(i).locator("text= Add To Cart").click() //locator based upon text
+            break;
+        }
+    }
+    //Going to cart and selecting the exact product from list of product to checkout
+    await page.locator("[routerlink*='cart']").click()
+    await page.locator("div li").first().waitFor() //wait if the function which we are using in next step is not eligible for auto wait
+    const bool = await page.locator("h3:has-text('ZARA COAT 3')").isVisible() //locator based upon text with tag
+    console.log(bool)
+    expect(bool).toBeTruthy()
+    await page.locator("text=Checkout").click()
+    //auto suggestion dropdown solution:
+    await page.locator("[placeholder*='Country']").pressSequentially("ind", {delay:150}) //delay is used to give 150 milliseconds delay before each key press
+    const dropdown = page.locator(".ta-results")
+    await dropdown.waitFor()
+    const optionsCount = await dropdown.locator("button").count()
+    for(let i = 0; i < optionsCount; ++i)
+    {
+        const text = await dropdown.locator("button").nth(i).textContent()
+        if(text === " India")
+        {
+            await dropdown.locator("button").nth(i).click()
+            break;
+        }
+    }
+    await expect(page.locator(".user__name [type='text']").first()).toHaveText(email)
+    await page.locator("[name='coupon']").fill("rahulshettyacademy")
+    await page.locator("[type='submit']").click()
+    await page.locator("p:has-text('* Coupon Applied')").waitFor()
+    await expect(page.locator("p:has-text('* Coupon Applied')")).toContainText("* Coupon Applied")
+    await page.locator(".action__submit").click()
+    await expect(page.locator(".hero-primary")).toHaveText(" Thankyou for the order. ")
+    const orderID = await page.locator(".em-spacer-1 .ng-star-inserted").textContent()
+    console.log(orderID)
+    await page.locator("button[routerlink*='myorders']").click()
+    //select Order ID from a table and view it
+    await page.locator("tbody").waitFor()
+    const itemsRows = await page.locator("tbody tr")
+    for(let i = 0; i < await itemsRows.count(); ++i)//use count directly in for loop
+    {
+        const rowOrderId = await itemsRows.nth(i).locator("th").textContent()
+        if(orderID.includes(rowOrderId))
+        {
+            await itemsRows.nth(i).locator("button").first().click()
+            break
+        }
+            
+    }
+    const orderIdDetails = await page.locator(".col-text").textContent()
+    expect(orderID.includes(orderIdDetails)).toBeTruthy()
+
+
+
+
+    //await page.pause()
+
+
+})

@@ -1,0 +1,19 @@
+[
+    {
+        "username" : "aniket.pathak4@gmail.com",
+        "password" : "Learning@123",
+        "productName" :"ZARA COAT 3",
+        "countryCode" : "ind",
+        "countryName" : "India",
+        "couponCode": "rahulshettyacademy"
+    },
+
+    {
+        "username" : "aniket.pathak3@gmail.com",
+        "password" : "Learning@123",
+        "productName" :"ADIDAS ORIGINAL",
+        "countryCode" : "cub",
+        "countryName" : "Cuba",
+        "couponCode": "rahulshettyacademy"
+    }
+]

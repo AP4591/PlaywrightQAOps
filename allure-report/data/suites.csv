@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","3763","Screenshot","chrome","2026-04-03","passed","2026-04-03","","MoreValidations6.spec.js","",""
+"","5109","Hidden element, Dialogue box and Popup Validation","chrome","2026-04-03","passed","2026-04-03","","MoreValidations6.spec.js","",""
+"","1","Visual comparison","chrome","2026-04-03","skipped","2026-04-03","","MoreValidations6.spec.js","",""
